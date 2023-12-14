@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+app.use(express.json());
 const path = require("path");
 const { open } = require("sqlite");
 const sqlite3 = require("sqlite3");
@@ -32,6 +33,12 @@ const convertMovieDbObjectToResponseObject = (movieDbObj) => {
   };
 };
 
+const convertMovieNameDbObjectToResponseObject = (movieDbObj) => {
+  return {
+    movieName: movieDbObj.movie_name,
+  };
+};
+
 const convertdirectorDbObjectToResponseObject = (dirDbObj) => {
   return {
     directorId: dirDbObj.director_id,
@@ -44,7 +51,9 @@ app.get("/movies/", async (request, response) => {
   const allMovies = `select * from movie`;
   const movies = await db.all(allMovies);
   response.send(
-    movies.map((eachMovie) => convertMovieDbObjectToResponseObject(eachMovie))
+    movies.map((eachMovie) =>
+      convertMovieNameDbObjectToResponseObject(eachMovie)
+    )
   );
 });
 
@@ -109,7 +118,9 @@ app.get("/directors/:directorId/movies/", async (request, response) => {
   const getDirMovies = `select * from movie where director_id=${directorId}`;
   const movies = await db.all(getDirMovies);
   response.send(
-    movies.map((eachMovie) => convertMovieDbObjectToResponseObject(eachMovie))
+    movies.map((eachMovie) =>
+      convertMovieNameDbObjectToResponseObject(eachMovie)
+    )
   );
 });
 
